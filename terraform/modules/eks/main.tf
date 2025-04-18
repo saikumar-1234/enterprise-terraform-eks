@@ -2,7 +2,7 @@
 
 # EKS cluster
 resource "aws_eks_cluster" "main" {
-  name     = "${var.environment}-eks-cluster"
+  name     = "${var.environment}-eks-clusterr"
   role_arn = var.cluster_role_arn
 
   vpc_config {
