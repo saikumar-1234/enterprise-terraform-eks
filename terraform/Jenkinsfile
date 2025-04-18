@@ -1,0 +1,43 @@
+```groovy
+// terraform/Jenkinsfile - CI/CD pipeline for Terraform deployment
+
+pipeline {
+    agent any
+    environment {
+        AWS_REGION = 'us-west-2'
+        TF_WORKSPACE = 'prod'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                // Checkout Terraform code from Git
+                git branch: 'main', url: '<your-git-repo>'
+            }
+        }
+        stage('Terraform Init') {
+            steps {
+                // Initialize Terraform and download providers
+                sh 'terraform init'
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                // Generate and review Terraform plan
+                sh "terraform workspace select ${TF_WORKSPACE} || terraform workspace new ${TF_WORKSPACE}"
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+        stage('Terraform Apply') {
+            steps {
+                // Apply Terraform changes to deploy infrastructure
+                sh 'terraform apply -auto-approve tfplan'
+            }
+        }
+    }
+    post {
+        always {
+            // Clean up workspace
+            cleanWs()
+        }
+    }
+}
